@@ -1,0 +1,221 @@
+{
+ "2": {
+  "class_type": "UNETLoader",
+  "inputs": {
+   "unet_name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "weight_dtype": "default"
+  }
+ },
+ "3": {
+  "class_type": "OpenH3RegenLora",
+  "inputs": {
+   "model": [
+    "2",
+    0
+   ],
+   "lora_name": "open_h3_regenerate_2k_lora.safetensors",
+   "curve_name": "sharp_curve_branches.safetensors",
+   "curve_table": "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+   "strength": 1.0,
+   "curve_strength": 1.0,
+   "lora_dtype": "bf16"
+  }
+ },
+ "6": {
+  "class_type": "CLIPLoader",
+  "inputs": {
+   "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+   "type": "minimax",
+   "device": "default"
+  }
+ },
+ "7": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_video_vae_fp16.safetensors"
+  }
+ },
+ "8": {
+  "class_type": "VAELoader",
+  "inputs": {
+   "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+  }
+ },
+ "9": {
+  "class_type": "LoadVideo",
+  "inputs": {
+   "file": "draft.mp4"
+  }
+ },
+ "10": {
+  "class_type": "GetVideoComponents",
+  "inputs": {
+   "video": [
+    "9",
+    0
+   ]
+  }
+ },
+ "11": {
+  "class_type": "OpenH3RegenPrepareDraft",
+  "inputs": {
+   "images": [
+    "10",
+    0
+   ],
+   "size": "768p (1344x768)",
+   "max_frames": 120,
+   "source_fps": [
+    "10",
+    2
+   ]
+  }
+ },
+ "12": {
+  "class_type": "VAEEncode",
+  "inputs": {
+   "pixels": [
+    "11",
+    0
+   ],
+   "vae": [
+    "7",
+    0
+   ]
+  }
+ },
+ "16": {
+  "class_type": "CLIPTextEncode",
+  "inputs": {
+   "text": "YOUR PROMPT HERE",
+   "clip": [
+    "6",
+    0
+   ]
+  }
+ },
+ "17": {
+  "class_type": "OpenH3RegenUpscale",
+  "inputs": {
+   "latent": [
+    "12",
+    0
+   ],
+   "model_name": "minimax_h3_latent_upscaler_3d_conv_v1_bf16.safetensors",
+   "resolution": "1080p (1920x1080)",
+   "precision": "bf16",
+   "temporal_chunking": false
+  }
+ },
+ "18": {
+  "class_type": "OpenH3RegenRefineLatent",
+  "inputs": {
+   "latent": [
+    "17",
+    0
+   ],
+   "audio_mode": "draft audio (AUDIO input)",
+   "audio_vae": [
+    "8",
+    0
+   ],
+   "audio": [
+    "10",
+    1
+   ]
+  }
+ },
+ "19": {
+  "class_type": "OpenH3RegenSigmas",
+  "inputs": {
+   "steps": 3,
+   "start_sigma": 0.909
+  }
+ },
+ "20": {
+  "class_type": "RandomNoise",
+  "inputs": {
+   "noise_seed": 1766580932
+  }
+ },
+ "21": {
+  "class_type": "KSamplerSelect",
+  "inputs": {
+   "sampler_name": "euler"
+  }
+ },
+ "22": {
+  "class_type": "BasicGuider",
+  "inputs": {
+   "model": [
+    "4",
+    0
+   ],
+   "conditioning": [
+    "16",
+    0
+   ]
+  }
+ },
+ "23": {
+  "class_type": "SamplerCustomAdvanced",
+  "inputs": {
+   "noise": [
+    "20",
+    0
+   ],
+   "guider": [
+    "22",
+    0
+   ],
+   "sampler": [
+    "21",
+    0
+   ],
+   "sigmas": [
+    "19",
+    0
+   ],
+   "latent_image": [
+    "18",
+    0
+   ]
+  }
+ },
+ "24": {
+  "class_type": "OpenH3SaveRefinedLatent",
+  "inputs": {
+   "samples": [
+    "23",
+    0
+   ],
+   "frame_count": [
+    "11",
+    1
+   ],
+   "filename_prefix": "ep07_refiner",
+   "audio": [
+    "10",
+    1
+   ]
+  }
+ },
+ "4": {
+  "class_type": "BlockSparseAttention",
+  "inputs": {
+   "model": [
+    "3",
+    0
+   ],
+   "selection": "sol-attn",
+   "selection.tau": 1.2,
+   "start_percent": 0.0,
+   "end_percent": 0.9,
+   "dense_blocks": "0,1,49",
+   "min_tokens": 12288,
+   "extra_tokens": 256,
+   "sink_conditioning": "exact_kv_and_rows",
+   "verbose": true
+  }
+ }
+}
