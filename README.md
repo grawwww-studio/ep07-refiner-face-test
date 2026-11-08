@@ -5,7 +5,7 @@ All people in these tests are AI-generated and fictional.
 
 We ran NVIDIA's Open H3 Regenerate 2K refiner at two settings, and a popular tutorial's refining method, on one synthetic test character and compared them with plain upscalers. This repository holds what we can share: the scoring rule, the numbers (every seed), the settings, three blind reads, and the node graphs. It is a small test: one synthetic test character, AI-made footage, one card.
 
-- Video: VIDEO_URL_SLOT
+- Video: https://youtu.be/7bRlXvV4OAE
 
 ## What is here
 | Path | What it is |
