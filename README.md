@@ -1,4 +1,3 @@
-<!-- DRAFT v6 (2026-11-07), local only, not published. Proposed repo: grawwww-studio/ep07-refiner-face-test. The repo goes up only with the episode's «publica». The video slot is filled at publish time. -->
 # Does an AI refiner keep her face? The settings, graphs and scores from our test
 
 All people in these tests are AI-generated and fictional.
